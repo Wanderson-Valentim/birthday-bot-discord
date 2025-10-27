@@ -1,4 +1,4 @@
-# 🎂 Birthday Bot
+# 🎂 Birthday Bot (Em desenvolvimento)
 
 > Um bot de Discord simples e eficiente para gerenciar e notificar aniversários no seu servidor, projetado para ser leve e fácil de hospedar (self-host).
 
