@@ -4,12 +4,20 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 	host: 'localhost',
 	dialect: 'sqlite',
 	logging: false,
-	storage: 'database.sqlite',
+	storage: './database/database.sqlite',
 });
 
-// 2. Example of importing and initializing models
-// const Users = require('./models/Users.js')(sequelize, DataTypes);
-// const CurrencyShop = require('./models/CurrencyShop.js')(sequelize, DataTypes);
-// const UserItems = require('./models/UserItems.js')(sequelize, DataTypes);
+const Birthdays = require('./models/Birthdays.js')(sequelize, DataTypes);
+const GuildSettings = require('./models/GuildSettings.js')(sequelize, DataTypes);
 
-module.exports = { sequelize };
+GuildSettings.hasMany(Birthdays, {
+	foreignKey: 'guild_id',
+	onDelete: 'CASCADE',
+});
+
+
+Birthdays.belongsTo(GuildSettings, {
+	foreignKey: 'guild_id',
+});
+
+module.exports = { sequelize, Birthdays, GuildSettings };
