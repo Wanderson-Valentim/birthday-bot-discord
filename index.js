@@ -1,21 +1,10 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits, MessageFlags } = require('discord.js');
+const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { sequelize } = require('./database');
 const token = process.env.DISCORD_BOT_TOKEN;
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-
-client.once(Events.ClientReady, (readyClient) => {
-	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
-});
-
-sequelize.sync()
-	.then(() => {
-		console.log('Synchronized database.');
-		client.login(token);
-	})
-	.catch(console.error);
 
 client.commands = new Collection();
 
@@ -29,7 +18,7 @@ for (const folder of commandFolders) {
 	for (const file of commandFiles) {
 		const filePath = path.join(commandsPath, file);
 		const command = require(filePath);
-		// Set a new item in the Collection with the key as the command name and the value as the exported module
+
 		if ('data' in command && 'execute' in command) {
 			client.commands.set(command.data.name, command);
 		}
@@ -39,31 +28,24 @@ for (const folder of commandFolders) {
 	}
 }
 
-client.on(Events.InteractionCreate, async (interaction) => {
-	if (!interaction.isChatInputCommand()) return;
-	const command = interaction.client.commands.get(interaction.commandName);
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
-	if (!command) {
-		console.error(`No command matching ${interaction.commandName} was found.`);
-		return;
-	}
+for (const file of eventFiles) {
+	const filePath = path.join(eventsPath, file);
+	const event = require(filePath);
 
-	try {
-		await command.execute(interaction);
+	if (event.once) {
+		client.once(event.name, (...args) => event.execute(...args));
 	}
-	catch (error) {
-		console.error(error);
-		if (interaction.replied || interaction.deferred) {
-			await interaction.followUp({
-				content: 'There was an error while executing this command!',
-				flags: MessageFlags.Ephemeral,
-			});
-		}
-		else {
-			await interaction.reply({
-				content: 'There was an error while executing this command!',
-				flags: MessageFlags.Ephemeral,
-			});
-		}
+	else {
+		client.on(event.name, (...args) => event.execute(...args));
 	}
-});
+}
+
+sequelize.sync()
+	.then(() => {
+		console.log('Synchronized database.');
+		client.login(token);
+	})
+	.catch(console.error);
