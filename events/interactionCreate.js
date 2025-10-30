@@ -1,5 +1,5 @@
 const { Events, MessageFlags } = require('discord.js');
-const GuildSettings = require('../database').GuildSettings;
+const guildSettingsRepo = require('../repositories/guildSettingsRepository.js');
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -15,10 +15,7 @@ module.exports = {
 
 		if (command.requiresDb) {
 			try {
-				const [settings, created] = await GuildSettings.findOrCreate({
-					where: { guild_id: interaction.guildId },
-					defaults: { guild_id: interaction.guildId },
-				});
+				const [settings, created] = await guildSettingsRepo.getOrCreate(interaction.guildId);
 
 				if (created) {
 					console.log(`[DB] Server ${interaction.guild.name} (ID: ${interaction.guildId}) was registered for the first time.`);
@@ -30,7 +27,7 @@ module.exports = {
 				console.error('Failed to check/create GuildSettings:', dbError);
 				await interaction.reply({
 					content: 'There was an error accessing the database. Please try again.',
-					ephemeral: true,
+					flags: MessageFlags.Ephemeral,
 				});
 				return;
 			}
@@ -40,18 +37,26 @@ module.exports = {
 			await command.execute(interaction);
 		}
 		catch (error) {
+			console.error('[COMMAND_EXECUTION_ERROR]');
+			console.error(`Command: /${interaction.commandName}`);
+			console.error(`User: ${interaction.user.tag} (ID: ${interaction.user.id})`);
+
+			if (interaction.inGuild()) {
+				console.error(`Guild: ${interaction.guild.name} (ID: ${interaction.guildId})`);
+			}
+
 			console.error(error);
+
+			const errorMessage = {
+				content: '❌ Ocorreu um erro ao tentar executar este comando. Por favor, tente novamente.',
+				flags: MessageFlags.Ephemeral,
+			};
+
 			if (interaction.replied || interaction.deferred) {
-				await interaction.followUp({
-					content: 'There was an error while executing this command!',
-					flags: MessageFlags.Ephemeral,
-				});
+				await interaction.followUp(errorMessage);
 			}
 			else {
-				await interaction.reply({
-					content: 'There was an error while executing this command!',
-					flags: MessageFlags.Ephemeral,
-				});
+				await interaction.reply(errorMessage);
 			}
 		}
 	},
