@@ -16,7 +16,14 @@ async function update(guildId, propertiesToUpdate) {
 	);
 }
 
+async function getByGuilId(guildId) {
+	return await GuildSettings.findOne({
+		where: { guild_id: guildId },
+	});
+}
+
 module.exports = {
 	getOrCreate,
 	update,
+	getByGuilId,
 };
