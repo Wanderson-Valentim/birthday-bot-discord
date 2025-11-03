@@ -3,12 +3,12 @@ module.exports = (sequelize, DataTypes) => {
 		'birthdays',
 		{
 			user_id: {
-				type: DataTypes.INTEGER,
+				type: DataTypes.STRING,
 				primaryKey: true,
 				allowNull: false,
 			},
 			guild_id: {
-				type: DataTypes.INTEGER,
+				type: DataTypes.STRING,
 				primaryKey: true,
 				allowNull: false,
 			},
@@ -19,10 +19,6 @@ module.exports = (sequelize, DataTypes) => {
 			month: {
 				type: DataTypes.INTEGER,
 				allowNull: false,
-			},
-			year: {
-				type: DataTypes.INTEGER,
-				allowNull: true,
 			},
 		},
 		{

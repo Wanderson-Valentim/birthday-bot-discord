@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 		'guild_settings',
 		{
 			guild_id: {
-				type: DataTypes.INTEGER,
+				type: DataTypes.STRING,
 				primaryKey: true,
 				allowNull: false,
 			},
