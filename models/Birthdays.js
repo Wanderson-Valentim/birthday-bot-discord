@@ -24,5 +24,13 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			timestamps: false,
 		},
+		{
+			indexes: [
+				{
+					name: 'guild_month_day_idx',
+					fields: ['guild_id', 'month', 'day'],
+				},
+			],
+		},
 	);
 };
