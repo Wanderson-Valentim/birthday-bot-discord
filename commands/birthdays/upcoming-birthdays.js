@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const birthdaysRepo = require('../../repositories/birthdaysRepository.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
+const { handleCommandError } = require('../../utils/errorHandler.js');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('proximos-aniversarios')
@@ -24,21 +25,12 @@ module.exports = {
 			});
 		}
 		catch (error) {
-			console.error(`[DB_SAVE_ERROR] Failed to fetch data for /${interaction.commandName}.`);
-			console.error(`Guild: ${interaction.guild.name} (ID: ${interaction.guildId})`);
-			console.error(error);
-
-			const errorMessage = {
-				embeds: MessageBuilder.error('Ocorreu um erro ao tentar buscar informações. Por favor, tente novamente.'),
-				flags: MessageFlags.Ephemeral,
-			};
-
-			if (interaction.replied || interaction.deferred) {
-				await interaction.followUp(errorMessage);
-			}
-			else {
-				await interaction.reply(errorMessage);
-			}
+			handleCommandError({
+				interaction,
+				error,
+				logContext: 'BIRTHDAYS',
+				userMessage: 'Ocorreu um erro ao tentar buscar informações. Por favor, tente novamente.',
+			});
 		}
 	},
 	requiresDb: true,

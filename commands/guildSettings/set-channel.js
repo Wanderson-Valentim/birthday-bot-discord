@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, ChannelType, MessageFlags } = require('discord.js');
 const guildSettingsRepo = require('../../repositories/guildSettingsRepository.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
+const { handleCommandError } = require('../../utils/errorHandler.js');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('definir-canal')
@@ -37,21 +38,12 @@ module.exports = {
 			});
 		}
 		catch (error) {
-			console.error(`[DB_SAVE_ERROR] Failed to save settings for /${interaction.commandName}.`);
-			console.error(`Guild: ${interaction.guild.name} (ID: ${interaction.guildId})`);
-			console.error(error);
-
-			const errorMessage = {
-				embeds: MessageBuilder.error('Ocorreu um erro ao tentar salvar sua configuração. Por favor, tente novamente.'),
-				flags: MessageFlags.Ephemeral,
-			};
-
-			if (interaction.replied || interaction.deferred) {
-				await interaction.followUp(errorMessage);
-			}
-			else {
-				await interaction.reply(errorMessage);
-			}
+			handleCommandError({
+				interaction,
+				error,
+				logContext: 'GUILD SETTINGS',
+				userMessage: 'Ocorreu um erro ao tentar salvar sua configuração. Por favor, tente novamente.',
+			});
 		}
 	},
 	requiresDb: true,
