@@ -1,5 +1,6 @@
-const { SlashCommandBuilder, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags, codeBlock } = require('discord.js');
 const birthdaysRepo = require('../../repositories/birthdaysRepository.js');
+const guildSettingsRepo = require('../../repositories/guildSettingsRepository.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
 
@@ -27,12 +28,31 @@ module.exports = {
 			const month = interaction.options.getInteger('mês');
 
 			const userId = user.id;
+			const guildId = interaction.guildId;
 
-			const existingBirthday = await birthdaysRepo.getOne(interaction.guildId, userId);
+			const guildSettings = await guildSettingsRepo.getByGuilId(guildId);
+
+			const notConfigured = Object.keys(guildSettings.dataValues).some(
+				(key) => guildSettings.dataValues[key] === null,
+			);
+
+			if (notConfigured) {
+				await interaction.reply({
+					embeds: MessageBuilder.info(
+						'O bot ainda não foi totalmente configurado.\n\n' +
+						'Use o comando abaixo para verificar as configurações atuais e ver o que está faltando:\n' +
+						codeBlock('/ver-configuracoes'),
+					),
+					flags: MessageFlags.Ephemeral,
+				});
+				return;
+			}
+
+			const existingBirthday = await birthdaysRepo.getOne(guildId, userId);
 
 			if (existingBirthday) {
 				await birthdaysRepo.update(
-					interaction.guildId,
+					guildId,
 					userId,
 					{ day, month },
 				);
@@ -45,7 +65,7 @@ module.exports = {
 			else {
 				await birthdaysRepo.create({
 					user_id: userId,
-					guild_id: interaction.guildId,
+					guild_id: guildId,
 					day,
 					month,
 				});
