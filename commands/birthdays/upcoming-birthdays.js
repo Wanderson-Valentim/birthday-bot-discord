@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
-const birthdaysRepo = require('../../repositories/birthdaysRepository.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
 
@@ -9,6 +8,9 @@ module.exports = {
 	async execute(interaction) {
 		try {
 			const monthsToFetch = 3;
+
+			const birthdaysRepo = interaction.client.repositories.birthdays;
+
 			const upcoming = await birthdaysRepo.getUpcomingByMonths(interaction.guildId, monthsToFetch);
 
 			if (upcoming.length === 0) {

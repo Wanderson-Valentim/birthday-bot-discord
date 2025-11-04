@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
-const guildSettingsRepo = require('../../repositories/guildSettingsRepository.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
 
@@ -9,7 +8,9 @@ module.exports = {
 
 	async execute(interaction) {
 		try {
-			const guildSettings = await guildSettingsRepo.getByGuilId(
+			const settingsRepo = interaction.client.repositories.settings;
+
+			const guildSettings = await settingsRepo.getByGuildId(
 				interaction.guildId,
 			);
 

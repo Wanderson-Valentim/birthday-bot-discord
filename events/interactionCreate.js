@@ -1,5 +1,4 @@
 const { Events, MessageFlags } = require('discord.js');
-const guildSettingsRepo = require('../repositories/guildSettingsRepository.js');
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -15,7 +14,9 @@ module.exports = {
 
 		if (command.requiresDb) {
 			try {
-				const [settings, created] = await guildSettingsRepo.getOrCreate(interaction.guildId);
+				const settingsRepo = interaction.client.repositories.settings;
+
+				const [settings, created] = await settingsRepo.getOrCreate(interaction.guildId);
 
 				if (created) {
 					console.log(`[DB] Server ${interaction.guild.name} (ID: ${interaction.guildId}) was registered for the first time.`);

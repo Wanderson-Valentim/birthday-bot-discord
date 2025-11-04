@@ -1,6 +1,4 @@
 const { SlashCommandBuilder, MessageFlags, codeBlock } = require('discord.js');
-const birthdaysRepo = require('../../repositories/birthdaysRepository.js');
-const guildSettingsRepo = require('../../repositories/guildSettingsRepository.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
 
@@ -30,7 +28,10 @@ module.exports = {
 			const userId = user.id;
 			const guildId = interaction.guildId;
 
-			const guildSettings = await guildSettingsRepo.getByGuilId(guildId);
+			const birthdaysRepo = interaction.client.repositories.birthdays;
+			const settingsRepo = interaction.client.repositories.settings;
+
+			const guildSettings = await settingsRepo.getByGuildId(guildId);
 
 			const notConfigured = Object.keys(guildSettings.dataValues).some(
 				(key) => guildSettings.dataValues[key] === null,

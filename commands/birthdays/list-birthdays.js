@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
-const birthdaysRepo = require('../../repositories/birthdaysRepository.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
 
@@ -8,6 +7,8 @@ module.exports = {
 		.setDescription('Lista todos os aniversários.'),
 	async execute(interaction) {
 		try {
+			const birthdaysRepo = interaction.client.repositories.birthdays;
+
 			const birthdays = await birthdaysRepo.getAllByGuildId(interaction.guildId);
 
 			if (birthdays.length === 0) {
@@ -17,7 +18,6 @@ module.exports = {
 				});
 				return;
 			}
-
 
 			await interaction.reply({
 				embeds: MessageBuilder.list(`🎉 Aniversários do servidor ${interaction.guild.name}`, birthdays),

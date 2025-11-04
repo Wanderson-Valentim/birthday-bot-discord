@@ -1,29 +1,29 @@
-const { GuildSettings } = require('../database.js');
+class GuildSettingsRepository {
+	constructor(guildSettingsModel) {
+		this.GuildSettings = guildSettingsModel;
+	}
 
-async function getOrCreate(guildId) {
-	return await GuildSettings.findOrCreate({
-		where: { guild_id: guildId },
-		defaults: { guild_id: guildId },
-	});
-}
-
-async function update(guildId, propertiesToUpdate) {
-	return await GuildSettings.update(
-		propertiesToUpdate,
-		{
+	async getOrCreate(guildId) {
+		return await this.GuildSettings.findOrCreate({
 			where: { guild_id: guildId },
-		},
-	);
+			defaults: { guild_id: guildId },
+		});
+	}
+
+	async update(guildId, propertiesToUpdate) {
+		return await this.GuildSettings.update(
+			propertiesToUpdate,
+			{
+				where: { guild_id: guildId },
+			},
+		);
+	}
+
+	async getByGuildId(guildId) {
+		return await this.GuildSettings.findOne({
+			where: { guild_id: guildId },
+		});
+	}
 }
 
-async function getByGuilId(guildId) {
-	return await GuildSettings.findOne({
-		where: { guild_id: guildId },
-	});
-}
-
-module.exports = {
-	getOrCreate,
-	update,
-	getByGuilId,
-};
+module.exports = GuildSettingsRepository;

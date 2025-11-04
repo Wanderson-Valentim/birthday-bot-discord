@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, ChannelType, MessageFlags } = require('discord.js');
-const guildSettingsRepo = require('../../repositories/guildSettingsRepository.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
 
@@ -27,7 +26,9 @@ module.exports = {
 				return;
 			}
 
-			await guildSettingsRepo.update(
+			const settingsRepo = interaction.client.repositories.settings;
+
+			await settingsRepo.update(
 				interaction.guildId,
 				{ notification_channel_id: newChannelId },
 			);

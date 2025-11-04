@@ -1,12 +1,22 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
-const { sequelize } = require('./database');
+const { sequelize, Birthdays, GuildSettings } = require('./database');
 const token = process.env.DISCORD_BOT_TOKEN;
+const BirthdaysRepository = require('./repositories/birthdaysRepository.js');
+const GuildSettingsRepository = require('./repositories/guildSettingsRepository.js');
+
+const birthdayRepo = new BirthdaysRepository(Birthdays, sequelize);
+const settingsRepo = new GuildSettingsRepository(GuildSettings);
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.commands = new Collection();
+
+client.repositories = {
+	birthdays: birthdayRepo,
+	settings: settingsRepo,
+};
 
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
@@ -45,7 +55,7 @@ for (const file of eventFiles) {
 
 sequelize.sync()
 	.then(() => {
-		console.log('Synchronized database.');
+		console.log('Database synchronized.');
 		client.login(token);
 	})
 	.catch(console.error);

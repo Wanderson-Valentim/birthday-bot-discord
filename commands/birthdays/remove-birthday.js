@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
-const birthdaysRepo = require('../../repositories/birthdaysRepository.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
 
@@ -13,6 +12,7 @@ module.exports = {
 	async execute(interaction) {
 		try {
 			const user = interaction.options.getUser('aniversariante');
+			const birthdaysRepo = interaction.client.repositories.birthdays;
 
 			const itWasRemoved = await birthdaysRepo.destroy(interaction.guildId, String(user.id));
 
