@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const birthdaysRepo = require('../../repositories/birthdaysRepository.js');
+const MessageBuilder = require('../../utils/messageBuilder.js');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('definir-aniversario')
@@ -36,7 +37,7 @@ module.exports = {
 				);
 
 				await interaction.reply({
-					content: `✅ O aniversário de ${user} foi atualizado para ${day}/${month}.`,
+					embeds: MessageBuilder.success(`O aniversário de ${user} foi atualizado para ${day}/${month}.`),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
@@ -49,7 +50,7 @@ module.exports = {
 				});
 
 				await interaction.reply({
-					content: `✅ O aniversário de ${user} foi registrado como ${day}/${month}.`,
+					embeds: MessageBuilder.success(`O aniversário de ${user} foi registrado como ${day}/${month}.`),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
@@ -60,7 +61,7 @@ module.exports = {
 			console.error(error);
 
 			const errorMessage = {
-				content: '❌ Ocorreu um erro ao tentar salvar sua configuração. Por favor, tente novamente.',
+				embeds: MessageBuilder.error('Ocorreu um erro ao tentar salvar sua configuração. Por favor, tente novamente.'),
 				flags: MessageFlags.Ephemeral,
 			};
 

@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const guildSettingsRepo = require('../../repositories/guildSettingsRepository.js');
+const MessageBuilder = require('../../utils/messageBuilder.js');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('definir-mensagem')
@@ -17,7 +18,7 @@ module.exports = {
 			);
 
 			await interaction.reply({
-				content: `✅ A mensagem de aniversário foi atualizada para:\n\`${newMessage}\``,
+				embeds: MessageBuilder.success(`A mensagem de aniversário foi atualizada para:\n\`${newMessage}\``),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -27,7 +28,7 @@ module.exports = {
 			console.error(error);
 
 			const errorMessage = {
-				content: '❌ Ocorreu um erro ao tentar salvar sua configuração. Por favor, tente novamente.',
+				embeds: MessageBuilder.error('Ocorreu um erro ao tentar salvar sua configuração. Por favor, tente novamente.'),
 				flags: MessageFlags.Ephemeral,
 			};
 

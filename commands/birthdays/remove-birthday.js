@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const birthdaysRepo = require('../../repositories/birthdaysRepository.js');
+const MessageBuilder = require('../../utils/messageBuilder.js');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('remover-aniversario')
@@ -16,14 +17,14 @@ module.exports = {
 
 			if (!itWasRemoved) {
 				await interaction.reply({
-					content: `⚠️ O aniversário de ${user} não estava registrado.`,
+					embeds: MessageBuilder.info(`O aniversário de ${user} não estava registrado.`),
 					flags: MessageFlags.Ephemeral,
 				});
 				return;
 			}
 
 			await interaction.reply({
-				content: `✅ O aniversário de ${user} foi removido com sucesso.`,
+				embeds: MessageBuilder.success(`O aniversário de ${user} foi removido com sucesso.`),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -33,7 +34,7 @@ module.exports = {
 			console.error(error);
 
 			const errorMessage = {
-				content: '❌ Ocorreu um erro ao tentar salvar sua configuração. Por favor, tente novamente.',
+				embeds: MessageBuilder.error('Ocorreu um erro ao tentar salvar sua configuração. Por favor, tente novamente.'),
 				flags: MessageFlags.Ephemeral,
 			};
 

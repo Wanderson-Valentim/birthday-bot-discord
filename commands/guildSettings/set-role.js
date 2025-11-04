@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const guildSettingsRepo = require('../../repositories/guildSettingsRepository.js');
+const MessageBuilder = require('../../utils/messageBuilder.js');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('definir-cargo')
@@ -19,7 +20,7 @@ module.exports = {
 
 			if (newRoleId === currentRoleId) {
 				await interaction.reply({
-					content: `O cargo ${role.toString()} já é o definido. Nenhuma alteração foi feita.`,
+					embeds: MessageBuilder.info(`O cargo ${role.toString()} já é o definido. Nenhuma alteração foi feita.`),
 					flags: MessageFlags.Ephemeral,
 				});
 				return;
@@ -31,7 +32,7 @@ module.exports = {
 			);
 
 			await interaction.reply({
-				content: `✅ O cargo de aniversário foi atualizado para ${role.toString()}!`,
+				embeds: MessageBuilder.success(`O cargo de aniversário foi atualizado para ${role.toString()}!`),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -41,7 +42,7 @@ module.exports = {
 			console.error(error);
 
 			const errorMessage = {
-				content: '❌ Ocorreu um erro ao tentar salvar sua configuração. Por favor, tente novamente.',
+				embeds: MessageBuilder.error('Ocorreu um erro ao tentar salvar sua configuração. Por favor, tente novamente.'),
 				flags: MessageFlags.Ephemeral,
 			};
 

@@ -1,5 +1,6 @@
-const { SlashCommandBuilder, MessageFlags, EmbedBuilder, channelMention, roleMention } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const guildSettingsRepo = require('../../repositories/guildSettingsRepository.js');
+const MessageBuilder = require('../../utils/messageBuilder.js');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('ver-configuracoes')
@@ -11,33 +12,8 @@ module.exports = {
 				interaction.guildId,
 			);
 
-			const channelId = guildSettings.notification_channel_id;
-			const roleId = guildSettings.birthday_role_id;
-
-			const channel = channelId
-				? channelMention(channelId)
-				: '`Nenhum canal definido`';
-
-			const role = roleId
-				? roleMention(roleId)
-				: '`Nenhum cargo definido`';
-
-			const message = guildSettings.birthday_message
-				? `\`\`\`${guildSettings.birthday_message}\`\`\``
-				: '`Nenhuma mensagem definida`';
-
-			const embed = new EmbedBuilder()
-				.setTitle('⚙️ Configurações de Aniversário')
-				.setDescription(`Estas são as configurações atuais para o servidor **${interaction.guild.name}**.`)
-				.setColor(0x0099FF)
-				.addFields(
-					{ name: 'Canal de Anúncios', value: channel, inline: true },
-					{ name: 'Cargo de Aniversariante', value: role, inline: true },
-					{ name: 'Mensagem de Aniversário', value: message, inline: false },
-				);
-
 			await interaction.reply({
-				embeds: [embed],
+				embeds: MessageBuilder.settings(interaction.guild.name, guildSettings),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -47,7 +23,7 @@ module.exports = {
 			console.error(error);
 
 			const errorMessage = {
-				content: '❌ Ocorreu um erro ao tentar salvar sua configuração. Por favor, tente novamente.',
+				embeds: MessageBuilder.error('Ocorreu um erro ao tentar salvar sua configuração. Por favor, tente novamente.'),
 				flags: MessageFlags.Ephemeral,
 			};
 
