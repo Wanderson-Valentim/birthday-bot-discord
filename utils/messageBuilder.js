@@ -84,11 +84,21 @@ class MessageBuilder {
 		];
 	}
 
-	static message(data) {
+	static message(data, userId = null) {
+		const userMentionStr = userId ? userMention(userId) : null ;
+
+		const title = data.birthday_message_title;
+		const color = data.birthday_message_color || 16293187;
+		let description = data.birthday_message;
+
+		if (userMentionStr) {
+			description = description.replace(/{user}/g, userMentionStr);
+		}
+
 		const embed = new EmbedBuilder()
-			.setColor(data.birthday_message_color ? data.birthday_message_color : 16293187)
-			.setTitle(data.birthday_message_title)
-			.setDescription(data.birthday_message);
+			.setColor(color)
+			.setTitle(title)
+			.setDescription(description);
 
 		if (data.birthday_message_image_url) {
 			embed.setImage(data.birthday_message_image_url);
