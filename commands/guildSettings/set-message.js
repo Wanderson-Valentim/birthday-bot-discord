@@ -50,6 +50,7 @@ module.exports = {
 			);
 
 			await interaction.reply({
+				content: newData.birthday_mention_everyone ? '@everyone' : null,
 				embeds: MessageBuilder.message(newData),
 				flags: MessageFlags.Ephemeral,
 			});
