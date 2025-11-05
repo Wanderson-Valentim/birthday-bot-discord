@@ -1,4 +1,4 @@
-const { EmbedBuilder, channelMention, roleMention, userMention } = require('discord.js');
+const { EmbedBuilder, channelMention, roleMention, userMention, codeBlock } = require('discord.js');
 
 class MessageBuilder {
 	static success(description) {
@@ -56,7 +56,7 @@ class MessageBuilder {
 			: '`Nenhum cargo definido`';
 
 		const message = currentMessage
-			? 'Mensagem definida! Para mais detalhes utilize' + '```/ver-mensagem```'
+			? 'Mensagem definida! Para mais detalhes utilize' + codeBlock('/ver-mensagem')
 			: '`Nenhuma mensagem definida`';
 
 		return [
