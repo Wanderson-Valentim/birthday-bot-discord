@@ -37,6 +37,16 @@ class BirthdaysRepository {
 		return await this.Birthdays.destroy({ where: { guild_id: guildId, user_id: userId } });
 	}
 
+	async getByDate(guildId, day, month) {
+		return await this.Birthdays.findAll({
+			where: {
+				guild_id: guildId,
+				day: day,
+				month: month,
+			},
+		});
+	}
+
 	async getUpcomingByMonths(guildId, monthsToFetch) {
 		const { monthFilters, hasPassedThisYear } = this.#calculateDateFilters(monthsToFetch);
 

@@ -36,6 +36,14 @@ module.exports = (sequelize, DataTypes) => {
 				defaultValue: false,
 				allowNull: false,
 			},
+			last_announcement_date: {
+				type: DataTypes.DATEONLY,
+				allowNull: true,
+			},
+			last_role_removal_date: {
+				type: DataTypes.DATEONLY,
+				allowNull: true,
+			},
 		},
 		{
 			timestamps: false,
