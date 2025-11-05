@@ -56,7 +56,7 @@ class MessageBuilder {
 			: '`Nenhum cargo definido`';
 
 		const message = currentMessage
-			? `\`\`\`${currentMessage}\`\`\``
+			? 'Mensagem definida! Para mais detalhes utilize' + '```/ver-mensagem```'
 			: '`Nenhuma mensagem definida`';
 
 		return [
@@ -85,14 +85,16 @@ class MessageBuilder {
 	}
 
 	static message(data) {
-		return [
-			new EmbedBuilder()
-				.setColor(data.color ? data.color : 16293187)
-				.setTitle(data.title)
-				.setDescription(data.message)
-				.setFields(
-				),
-		];
+		const embed = new EmbedBuilder()
+			.setColor(data.birthday_message_color ? data.birthday_message_color : 16293187)
+			.setTitle(data.birthday_message_title)
+			.setDescription(data.birthday_message);
+
+		if (data.birthday_message_image_url) {
+			embed.setImage(data.birthday_message_image_url);
+		}
+
+		return [embed];
 	}
 }
 
