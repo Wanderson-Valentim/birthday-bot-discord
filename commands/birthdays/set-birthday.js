@@ -33,9 +33,10 @@ module.exports = {
 
 			const guildSettings = await settingsRepo.getByGuildId(guildId);
 
-			const notConfigured = Object.keys(guildSettings.dataValues).some(
-				(key) => guildSettings.dataValues[key] === null,
-			);
+			const notConfigured =
+				guildSettings.notification_channel_id === null ||
+				guildSettings.birthday_role_id === null ||
+				guildSettings.birthday_message === null;
 
 			if (notConfigured) {
 				await interaction.reply({
