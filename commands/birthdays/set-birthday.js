@@ -1,10 +1,12 @@
 const { SlashCommandBuilder, MessageFlags, codeBlock } = require('discord.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
+const { getTodayDateParts, getTodayString } = require('../../utils/dateUtils.js');
+const { announceBirthday } = require('../../utils/announcer.js');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('definir-aniversario')
-		.setDescription('Registra ou atualiza o aniversário de um membro. O ano de nascimento é opcional.')
+		.setDescription('Registra ou atualiza o aniversário de um membro.')
 		.addUserOption((option) => option.setName('aniversariante')
 			.setDescription('O membro a ser parabenizado.')
 			.setRequired(true))
@@ -29,9 +31,8 @@ module.exports = {
 			const guildId = interaction.guildId;
 
 			const birthdaysRepo = interaction.client.repositories.birthdays;
-			const settingsRepo = interaction.client.repositories.settings;
 
-			const guildSettings = await settingsRepo.getByGuildId(guildId);
+			const guildSettings = interaction.settings;
 
 			const notConfigured =
 				guildSettings.notification_channel_id === null ||
@@ -50,14 +51,47 @@ module.exports = {
 				return;
 			}
 
+			const todayParts = getTodayDateParts();
+			const todayString = getTodayString();
+
+			const isNewDateToday = (day === todayParts.day && month === todayParts.month);
+
+			const hasJobRunToday = (guildSettings.last_announcement_date === todayString);
+
 			const existingBirthday = await birthdaysRepo.getOne(guildId, userId);
 
 			if (existingBirthday) {
+				if (existingBirthday.day === day && existingBirthday.month === month) {
+					await interaction.reply({
+						embeds: MessageBuilder.info(`O aniversário de ${user} já está definido como ${day}/${month}.`),
+						flags: MessageFlags.Ephemeral,
+					});
+					return;
+				}
+
 				await birthdaysRepo.update(
 					guildId,
 					userId,
 					{ day, month },
 				);
+
+				if (!isNewDateToday) {
+					const role = await interaction.guild.roles.fetch(guildSettings.birthday_role_id).catch(() => null);
+					if (role) {
+						const member = await interaction.guild.members.fetch(userId).catch(() => null);
+
+						if (member && member.roles.cache.has(role.id)) {
+							await member.roles.remove(role, 'Data de aniversário foi alterada');
+						}
+					}
+				}
+
+				if (isNewDateToday && hasJobRunToday) {
+					const member = await interaction.guild.members.fetch(user.id);
+					if (member) {
+						await announceBirthday(interaction.guild, member, guildSettings);
+					}
+				}
 
 				await interaction.reply({
 					embeds: MessageBuilder.success(`O aniversário de ${user} foi atualizado para ${day}/${month}.`),
@@ -71,6 +105,13 @@ module.exports = {
 					day,
 					month,
 				});
+
+				if (isNewDateToday && hasJobRunToday) {
+					const member = await interaction.guild.members.fetch(user.id);
+					if (member) {
+						await announceBirthday(interaction.guild, member, guildSettings);
+					}
+				}
 
 				await interaction.reply({
 					embeds: MessageBuilder.success(`O aniversário de ${user} foi registrado como ${day}/${month}.`),
