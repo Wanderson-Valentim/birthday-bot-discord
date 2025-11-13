@@ -1,16 +1,38 @@
 {
   "name": "birthday_bot",
-  "version": "1.0.0",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Discord bot to manage and notify birthdays on your server, designed to be lightweight and easy to self-host.",
+  "author": "Wanderson-Valentim",
+  "license": "MIT",
   "main": "index.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wanderson-Valentim/birthday-bot-discord.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Wanderson-Valentim/birthday-bot-discord/issues"
+  },
+  "homepage": "https://github.com/Wanderson-Valentim/birthday-bot-discord#readme",
   "scripts": {
     "start": "node --env-file=.env index.js",
     "dev": "node --env-file=.env --watch index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy:dev": "node --env-file=.env deploy-commands.js",
+    "deploy:global": "node --env-file=.env deploy-commands.js --global"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "discord",
+    "bot",
+    "discordjs",
+    "birthday",
+    "sqlite",
+    "sequelize",
+    "node-cron",
+    "self-host"
+  ],
   "dependencies": {
     "discord.js": "^14.23.2",
     "node-cron": "^4.2.1",
