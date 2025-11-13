@@ -21,7 +21,9 @@
     "start": "node --env-file=.env index.js",
     "dev": "node --env-file=.env --watch index.js",
     "deploy:dev": "node --env-file=.env deploy-commands.js",
-    "deploy:global": "node --env-file=.env deploy-commands.js --global"
+    "deploy:global": "node --env-file=.env deploy-commands.js --global",
+    "clear:dev": "node --env-file=.env clear-commands.js",
+    "clear:global": "node --env-file=.env clear-commands.js --global"
   },
   "keywords": [
     "discord",
