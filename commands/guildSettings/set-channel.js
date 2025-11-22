@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ChannelType, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, ChannelType, MessageFlags, PermissionFlagsBits } = require('discord.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
 
@@ -8,8 +8,9 @@ module.exports = {
 		.addChannelOption((option) => option.setName('canal')
 			.setDescription('O canal de texto para anunciar os aniversários.')
 			.addChannelTypes(ChannelType.GuildText)
-			.setRequired(true)),
-
+			.setRequired(true))
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+	adminOnly: true,
 	async execute(interaction) {
 		try {
 			const channel = interaction.options.getChannel('canal');

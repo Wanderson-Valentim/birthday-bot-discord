@@ -1,11 +1,12 @@
-const { SlashCommandBuilder, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags, PermissionFlagsBits } = require('discord.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
 
 module.exports = {
 	data: new SlashCommandBuilder().setName('ver-configuracoes')
-		.setDescription('Exibe as configurações atuais do servidor.'),
-
+		.setDescription('Exibe as configurações atuais do servidor.')
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+	adminOnly: true,
 	async execute(interaction) {
 		try {
 			const settingsRepo = interaction.client.repositories.settings;

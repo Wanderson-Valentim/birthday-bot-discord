@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags, PermissionFlagsBits } = require('discord.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
 
@@ -19,8 +19,9 @@ module.exports = {
 			.setRequired(false))
 		.addStringOption((option) => option.setName('link-imagem')
 			.setDescription('Link de uma imagem para o embed da mensagem. Opcional.')
-			.setRequired(false)),
-
+			.setRequired(false))
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+	adminOnly: true,
 	async execute(interaction) {
 		try {
 			const newData = {

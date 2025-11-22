@@ -5,6 +5,7 @@ const { handleCommandError } = require('../../utils/errorHandler.js');
 module.exports = {
 	data: new SlashCommandBuilder().setName('listar-aniversarios')
 		.setDescription('Lista todos os aniversários.'),
+	adminOnly: false,
 	async execute(interaction) {
 		try {
 			const birthdaysRepo = interaction.client.repositories.birthdays;

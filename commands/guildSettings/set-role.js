@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags, PermissionFlagsBits } = require('discord.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
 
@@ -7,8 +7,9 @@ module.exports = {
 		.setDescription('Define ou atualiza o cargo especial a ser dado no dia do aniversário.')
 		.addRoleOption((option) => option.setName('cargo')
 			.setDescription('Cargo a ser dado no dia do aniversário.')
-			.setRequired(true)),
-
+			.setRequired(true))
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+	adminOnly: true,
 	async execute(interaction) {
 		try {
 			const role = interaction.options.getRole('cargo');

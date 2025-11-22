@@ -5,6 +5,7 @@ const { handleCommandError } = require('../../utils/errorHandler.js');
 module.exports = {
 	data: new SlashCommandBuilder().setName('proximos-aniversarios')
 		.setDescription('Lista os aniversários que ocorrerão nos próximos 3 meses.'),
+	adminOnly: false,
 	async execute(interaction) {
 		try {
 			const monthsToFetch = 3;

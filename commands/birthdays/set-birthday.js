@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, MessageFlags, codeBlock } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags, codeBlock, PermissionFlagsBits } = require('discord.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
 const { getTodayDateParts, getTodayString } = require('../../utils/dateUtils.js');
@@ -19,8 +19,9 @@ module.exports = {
 			.setDescription('O mês do aniversário (1-12).')
 			.setRequired(true)
 			.setMinValue(1)
-			.setMaxValue(12)),
-
+			.setMaxValue(12))
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+	adminOnly: true,
 	async execute(interaction) {
 		try {
 			const user = interaction.options.getUser('aniversariante');

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags, PermissionFlagsBits } = require('discord.js');
 const MessageBuilder = require('../../utils/messageBuilder.js');
 const { handleCommandError } = require('../../utils/errorHandler.js');
 
@@ -7,8 +7,9 @@ module.exports = {
 		.setDescription('Remove o aniversário de um membro.')
 		.addUserOption((option) => option.setName('aniversariante')
 			.setDescription('O membro cujo aniversário será removido.')
-			.setRequired(true)),
-
+			.setRequired(true))
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+	adminOnly: true,
 	async execute(interaction) {
 		try {
 			const user = interaction.options.getUser('aniversariante');

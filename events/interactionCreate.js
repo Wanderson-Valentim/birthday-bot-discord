@@ -1,4 +1,5 @@
-const { Events, MessageFlags } = require('discord.js');
+const { Events, MessageFlags, PermissionFlagsBits } = require('discord.js');
+const MessageBuilder = require('../utils/messageBuilder.js');
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -10,6 +11,16 @@ module.exports = {
 		if (!command) {
 			console.error(`No command matching ${interaction.commandName} was found.`);
 			return;
+		}
+
+		if (command.adminOnly) {
+			if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+				await interaction.reply({
+					embeds: MessageBuilder.error('Você não tem permissão para executar este comando. Apenas administradores podem usá-lo.'),
+					flags: MessageFlags.Ephemeral,
+				});
+				return;
+			}
 		}
 
 		if (command.requiresDb) {
@@ -25,9 +36,9 @@ module.exports = {
 				interaction.settings = settings;
 			}
 			catch (dbError) {
-				console.error('Failed to check/create GuildSettings:', dbError);
+				console.error('[DB ERROR] Failed to check/create GuildSettings:', dbError);
 				await interaction.reply({
-					content: 'There was an error accessing the database. Please try again.',
+					embeds: MessageBuilder.error('Ocorreu um erro ao tentar executar este comando. Por favor, tente novamente mais tarde.'),
 					flags: MessageFlags.Ephemeral,
 				});
 				return;
@@ -38,27 +49,12 @@ module.exports = {
 			await command.execute(interaction);
 		}
 		catch (error) {
-			console.error('[COMMAND_EXECUTION_ERROR]');
-			console.error(`Command: /${interaction.commandName}`);
-			console.error(`User: ${interaction.user.tag} (ID: ${interaction.user.id})`);
-
-			if (interaction.inGuild()) {
-				console.error(`Guild: ${interaction.guild.name} (ID: ${interaction.guildId})`);
-			}
-
-			console.error(error);
-
-			const errorMessage = {
-				content: '❌ Ocorreu um erro ao tentar executar este comando. Por favor, tente novamente.',
-				flags: MessageFlags.Ephemeral,
-			};
-
-			if (interaction.replied || interaction.deferred) {
-				await interaction.followUp(errorMessage);
-			}
-			else {
-				await interaction.reply(errorMessage);
-			}
+			handleCommandError({
+				interaction,
+				error,
+				logContext: 'INTERACTION CREATE',
+				userMessage: 'Ocorreu um erro ao tentar executar este comando. Por favor, tente novamente.',
+			});
 		}
 	},
 };
