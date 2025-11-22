@@ -2,7 +2,7 @@ services:
   birthday-bot:
     build: .
     container_name: birthday-bot
-    # restart: unless-stopped
+    restart: unless-stopped
     
     volumes:
       - app-data:/usr/src/app/database
