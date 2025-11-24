@@ -9,7 +9,10 @@ const GuildSettingsRepository = require('./repositories/guildSettingsRepository.
 const birthdayRepo = new BirthdaysRepository(Birthdays, sequelize);
 const settingsRepo = new GuildSettingsRepository(GuildSettings);
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [
+	GatewayIntentBits.Guilds,
+	GatewayIntentBits.GuildMembers,
+] });
 
 client.commands = new Collection();
 

@@ -32,6 +32,8 @@ async function executeRoleRemoval(client) {
 			const role = await guild.roles.fetch(settings.birthday_role_id).catch(() => null);
 			if (!role) continue;
 
+			await guild.members.fetch();
+
 			const birthdaysToday = await birthdaysRepo.getByDate(guild.id, todayParts.day, todayParts.month);
 
 			const birthdaysTodaySet = new Set(birthdaysToday.map(b => b.user_id));
@@ -41,10 +43,10 @@ async function executeRoleRemoval(client) {
 			for (const member of membersWithRole.values()) {
 				if (!birthdaysTodaySet.has(member.id)) {
 					try {
-						await member.roles.remove(role, 'Aniversário terminou ou data foi alterada');
+						await member.roles.remove(role, 'Birthday ended or date changed');
 					}
 					catch (memberError) {
-						console.error(`[ROLE_REMOVE_ERROR] Falha ao remover cargo de ${member.id}`, memberError);
+						console.error(`[ROLE_REMOVE_ERROR] Failed to remove role from ${member.id}`, memberError);
 					}
 				}
 			}
@@ -52,7 +54,7 @@ async function executeRoleRemoval(client) {
 			await settings.update({ last_role_removal_date: todayString });
 		}
 		catch (error) {
-			console.error(`[ROLE_MANAGER_ERROR] Falha ao processar guild ${guild.name}`, error);
+			console.error(`[ROLE_MANAGER_ERROR] Failed to process guild ${guild.name}`, error);
 		}
 	}
 }
